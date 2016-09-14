@@ -30,9 +30,6 @@ public class AlertVisualStyle: NSObject {
     /// automatically determined.
     public var actionViewSize: CGSize
 
-    /// The color of an action when the user is tapping it
-    public var actionHighlightColor = UIColor(white: 0.8, alpha: 0.7)
-
     /// The color of the separators between actions
     public var actionViewSeparatorColor = UIColor(white: 0.5, alpha: 0.5)
 
@@ -56,6 +53,9 @@ public class AlertVisualStyle: NSObject {
 
     /// The color for a nondestructive action's text
     public var normalTextColor: UIColor?
+
+    /// The color for a preferred action's text
+    public var preferredTextColor: UIColor?
 
     /// The color for a destructive action's text
     public var destructiveTextColor = UIColor.redColor()
@@ -108,6 +108,24 @@ public class AlertVisualStyle: NSObject {
     }
 
     /**
+     The color of an action
+
+     - parameter action: The action to determine its color
+
+     - returns: The action color
+     */
+    public func actionColor(forAction action: AlertAction?) -> UIColor { return .clearColor() }
+
+    /**
+     The color of an action when the user is tapping it
+
+     - parameter action: The action to determine its highlighted color
+
+     - returns: The action higlighted color
+     */
+    public func actionHighlightColor(forAction action: AlertAction?) -> UIColor { return UIColor(white: 0.8, alpha: 0.7) }
+
+    /**
      The text color for a given action.
 
      - parameter action: The action that determines the text color
@@ -115,7 +133,19 @@ public class AlertVisualStyle: NSObject {
      - returns: The text color. A nil value will use the alert's `tintColor`.
      */
     public func textColor(forAction action: AlertAction?) -> UIColor? {
-        return action?.style == .Destructive ? self.destructiveTextColor : self.normalTextColor
+        guard let actionStyle = action?.style else
+        {
+            return self.normalTextColor
+        }
+
+        switch actionStyle {
+        case .Default:
+            return self.normalTextColor
+        case .Preferred:
+            return self.preferredTextColor
+        case .Destructive:
+            return self.destructiveTextColor
+        }
     }
 
     /**
